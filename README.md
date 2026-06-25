@@ -270,186 +270,49 @@ Paperclip is a full control plane, not a wrapper. Before you build any of this y
 
 ## Quickstart
 
-Open source. Self-hosted. No Paperclip account required.
+### Pre-built .exe (Windows — no build required)
 
-```bash
-npx paperclipai onboard --yes
-```
+1. Download `Paperclip.exe` from [GitHub Releases](https://github.com/HenkDz/paperclip/releases)
+2. Place it inside the repo folder (where `package.json` lives)
+3. Run `Paperclip.exe` — that's it
 
-**Or use the Desktop app (this fork):**
-
-```bash
+The .exe needs the repo's `node_modules` at runtime. If you cloned the repo:
+```powershell
 git clone https://github.com/HenkDz/paperclip.git
 cd paperclip
 pnpm install
-pnpm desktop:build
+# Drop Paperclip.exe here and double-click
+```
+
+### Build from source
+
+```powershell
+git clone https://github.com/HenkDz/paperclip.git
+cd paperclip
+pnpm install
+pnpm desktop:build      # Build UI + server bundle
 # Launch: desktop\dist-electron\win-unpacked\Paperclip.exe
 ```
 
-> **Troubleshooting: private npm registry `.npmrc`**
->
-> If this fails with an `E404` for `paperclipai` (or similar) and you use a private npm registry (for example GitHub Packages) via a global `~/.npmrc`, `npx` may be resolving `paperclipai` against that private registry instead of the public npm registry.
->
-> Diagnostic:
->
-> ```bash
-> npm config get registry
-> ```
->
-> Workaround (cross-platform; force the public npm registry for this command):
->
-> ```bash
-> npx --registry https://registry.npmjs.org paperclipai onboard --yes
-> ```
-
-That quickstart path now defaults to trusted local loopback mode for the fastest first run. To start in authenticated/private mode instead, choose a bind preset explicitly:
-
-```bash
-npx paperclipai onboard --yes --bind lan
-# or:
-npx paperclipai onboard --yes --bind tailnet
-```
-
-If you already have Paperclip configured, rerunning `onboard` keeps the existing config in place. Use `paperclipai configure` to edit settings.
-
-Or manually:
-
-```bash
-git clone https://github.com/paperclipai/paperclip.git
-cd paperclip
-pnpm install
-pnpm dev
-```
-
-This starts the API server at `http://localhost:3100`. An embedded PostgreSQL database is created automatically — no setup required.
-
 > **Requirements:** Node.js 20+, pnpm 9.15+
-
-<br/>
-
-## FAQ
-
-**What does a typical setup look like?**
-Locally, a single Node.js process manages an embedded Postgres and local file storage. For production, point it at your own Postgres and deploy however you like. Configure projects, agents, and goals — the agents take care of the rest.
-
-If you're a solo entrepreneur you can use Tailscale to access Paperclip on the go. Then later you can deploy to e.g. Vercel when you need it.
-
-**Can I run multiple companies?**
-Yes. A single deployment can run an unlimited number of companies with complete data isolation.
-
-**How is Paperclip different from agents like OpenClaw or Claude Code?**
-Paperclip _uses_ those agents. It orchestrates them into a company — with org charts, budgets, goals, governance, and accountability.
-
-**Why should I use Paperclip instead of just pointing my OpenClaw to Asana or Trello?**
-Agent orchestration has subtleties in how you coordinate who has work checked out, how to maintain sessions, monitoring costs, establishing governance - Paperclip does this for you.
-
-(Bring-your-own-ticket-system is on the Roadmap)
-
-**Do agents run continuously?**
-By default, agents run on scheduled heartbeats and event-based triggers (task assignment, @-mentions). You can also hook in continuous agents like OpenClaw. You bring your agent and Paperclip coordinates.
-
-<br/>
-
-## Development
-
-```bash
-pnpm dev              # Full dev (API + UI, watch mode)
-pnpm dev:once         # Full dev without file watching
-pnpm dev:server       # Server only
-pnpm build            # Build all
-pnpm typecheck        # Type checking
-pnpm test             # Cheap default test run (Vitest only)
-pnpm test:watch       # Vitest watch mode
-pnpm test:e2e         # Playwright browser suite
-pnpm db:generate      # Generate DB migration
-pnpm db:migrate       # Apply migrations
-```
-
-`pnpm test` does not run Playwright. Browser suites stay separate and are typically run only when working on those flows or in CI.
-
-See [doc/DEVELOPING.md](doc/DEVELOPING.md) for the full development guide.
-
-<br/>
-
-## Roadmap
-
-- ✅ Plugin system (e.g. add a knowledge base, custom tracing, queues, etc)
-- ✅ Get OpenClaw / claw-style agent employees
-- ✅ companies.sh - import and export entire organizations
-- ✅ Easy AGENTS.md configurations
-- ✅ Skills Manager
-- ✅ Scheduled Routines
-- ✅ Better Budgeting
-- ✅ Agent Reviews and Approvals
-- ✅ Multiple Human Users
-- ⚪ Cloud / Sandbox agents (e.g. Cursor / e2b / Novita agents)
-- ⚪ Artifacts & Work Products
-- ⚪ Memory / Knowledge
-- ⚪ Enforced Outcomes
-- ⚪ MAXIMIZER MODE
-- ⚪ Deep Planning
-- ⚪ Work Queues
-- ⚪ Self-Organization
-- ⚪ Automatic Organizational Learning
-- ⚪ CEO Chat
-- ⚪ Cloud deployments
-- ⚪ Desktop App
-
-This is the short roadmap preview. See the full roadmap in [ROADMAP.md](ROADMAP.md).
-
-<br/>
-
-## Community & Plugins
-
-Find Plugins and more at [awesome-paperclip](https://github.com/gsxdsm/awesome-paperclip)
-
-## Observability
-
-Paperclip ships with opt-in OpenTelemetry auto-instrumentation for the server (traces only). It activates when `OTEL_EXPORTER_OTLP_ENDPOINT` is set and supports `grpc`, `http/protobuf`, and `http/json` via the standard `OTEL_EXPORTER_OTLP_PROTOCOL` env var. The `@opentelemetry/*` packages are optional peer dependencies — install them only if you want tracing. See [doc/observability.md](doc/observability.md) for install commands and the full env-var reference.
-
-## Telemetry
-
-Paperclip collects anonymous usage telemetry to help us understand how the product is used and improve it. No personal information, issue content, prompts, file paths, or secrets are ever collected. Private repository references are hashed with a per-install salt before being sent.
-
-Telemetry is **enabled by default** and can be disabled with any of the following:
-
-| Method               | How                                                     |
-| -------------------- | ------------------------------------------------------- |
-| Environment variable | `PAPERCLIP_TELEMETRY_DISABLED=1`                        |
-| Standard convention  | `DO_NOT_TRACK=1`                                        |
-| CI environments      | Automatically disabled when `CI=true`                   |
-| Config file          | Set `telemetry.enabled: false` in your Paperclip config |
-
-## Contributing
-
-We welcome contributions. See the [contributing guide](CONTRIBUTING.md) for details.
-
-<br/>
-
 
 ## Fork Changes
 
-This fork ([HenkDz/paperclip](https://github.com/HenkDz/paperclip)) adds:
-
 ### 🖥️ Windows Desktop App (`desktop/`)
 
-Native Electron wrapper — double-click to run Paperclip. No terminal needed.
+Native Electron wrapper — double-click to run. No terminal, no browser tab hunting.
 
-```powershell
-# Build
-pnpm install
-pnpm desktop:build      # Build UI + server bundle
-pnpm desktop:dist       # Full .exe (NSIS installer)
-
-# Dev
-pnpm desktop:dev        # Build + launch Electron
-```
-
-- **In-process server** — the Paperclip server runs inside Electron (no spawn)
-- **System tray** — minimize to tray, right-click to quit
-- **Single instance** — second launch focuses existing window
+- **In-process server** — Paperclip server runs inside Electron
+- **System tray** — minimize to tray, right-click to show/quit
+- **Single instance lock** — second launch focuses existing window
 - **Data** stored in `%APPDATA%/paperclip-desktop/`
 - All features identical to the web version — same server, same UI
+
+```powershell
+pnpm desktop:dev        # Build + launch Electron (dev mode)
+pnpm desktop:build      # Build UI + server bundle
+pnpm desktop:dist       # Full .exe (NSIS installer)
+```
 
 ### 🛠️ NTFS QoL Patches
 
@@ -461,30 +324,11 @@ pnpm desktop:dev        # Build + launch Electron
 ### 🔌 Externalized Adapters
 
 - Hermes adapter removed from core — install via Board → Adapter Manager
-- Plugin system supports external adapter loading (PR #2218 pattern)
+- Plugin system supports external adapter loading
 - Branch: `feat/externalize-hermes-adapter`
-
-## Community
-
-- [Discord](https://discord.gg/m4HZY7xNG3) — Join the community
-- [Twitter / X](https://x.com/papercliping) — Follow updates and announcements
-- [GitHub Issues](https://github.com/paperclipai/paperclip/issues) — bugs and feature requests
-- [GitHub Discussions](https://github.com/paperclipai/paperclip/discussions) — ideas and RFC
 
 <br/>
 
 ## License
 
-MIT &copy; 2026 [Paperclip Labs, Inc](https://paperclip.ing)
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/image?repos=paperclipai/paperclip&type=date&legend=top-left)](https://www.star-history.com/?repos=paperclipai%2Fpaperclip&type=date&legend=top-left)
-
-<br/>
-
----
-
-<p align="center">
-  <sub>Open source under MIT. Built for people who want to get work done, not babysit agents.</sub>
-</p>
+MIT &copy; 2026 [Paperclip Labs, Inc](https://paperclip.ing). This fork retains the same license.
