@@ -302,7 +302,9 @@ pnpm desktop:build      # Build UI + server bundle
 
 Native Electron wrapper — double-click to run. No terminal, no browser tab hunting.
 
-- **In-process server** — Paperclip server runs inside Electron
+- **Local mode** — runs the full Paperclip server in-process (embedded PostgreSQL, all features)
+- **Remote mode** *(planned)* — connect to any existing Paperclip server URL, no local setup needed
+- **Auto-update** *(planned)* — checks GitHub Releases, notifies on new versions
 - **System tray** — minimize to tray, right-click to show/quit
 - **Single instance lock** — second launch focuses existing window
 - **Data** stored in `%APPDATA%/paperclip-desktop/`
