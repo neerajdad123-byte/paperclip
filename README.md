@@ -2,22 +2,14 @@
   <img src="doc/assets/banner.jpg" alt="Paperclip is the app people use to manage AI agents for work." width="720" />
 </p>
 
+> **This is a community fork** of [paperclipai/paperclip](https://github.com/paperclipai/paperclip) with **Windows Desktop app** support, NTFS patches, and QoL enhancements. See [Fork Changes](#fork-changes) below.
+
 <p align="center">
-  <a href="#quickstart"><strong>Quickstart</strong></a> &middot;
+  <a href="https://github.com/paperclipai/paperclip"><strong>Upstream</strong></a> &middot;
+  <a href="https://github.com/HenkDz/paperclip"><strong>Fork</strong></a> &middot;
   <a href="https://paperclip.ing/docs"><strong>Docs</strong></a> &middot;
-  <a href="https://github.com/paperclipai/paperclip"><strong>GitHub</strong></a> &middot;
-  <a href="https://discord.gg/m4HZY7xNG3"><strong>Discord</strong></a> &middot;
-  <a href="https://x.com/papercliping"><strong>Twitter</strong></a> &middot;
-  <a href="https://paperclip.ing"><strong>Website</strong></a>
+  <a href="https://discord.gg/m4HZY7xNG3"><strong>Discord</strong></a>
 </p>
-
-<p align="center">
-  <a href="https://github.com/paperclipai/paperclip/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License" /></a>
-  <a href="https://github.com/paperclipai/paperclip/stargazers"><img src="https://img.shields.io/github/stars/paperclipai/paperclip?style=flat" alt="Stars" /></a>
-  <a href="https://discord.gg/m4HZY7xNG3"><img src="https://img.shields.io/discord/000000000?label=discord" alt="Discord" /></a>
-</p>
-
-<br/>
 
 <div align="center">
   <video src="https://github.com/user-attachments/assets/773bdfb2-6d1e-4e30-8c5f-3487d5b70c8f" width="600" controls></video>
@@ -284,6 +276,16 @@ Open source. Self-hosted. No Paperclip account required.
 npx paperclipai onboard --yes
 ```
 
+**Or use the Desktop app (this fork):**
+
+```bash
+git clone https://github.com/HenkDz/paperclip.git
+cd paperclip
+pnpm install
+pnpm desktop:build
+# Launch: desktop\dist-electron\win-unpacked\Paperclip.exe
+```
+
 > **Troubleshooting: private npm registry `.npmrc`**
 >
 > If this fails with an `E404` for `paperclipai` (or similar) and you use a private npm registry (for example GitHub Packages) via a global `~/.npmrc`, `npx` may be resolving `paperclipai` against that private registry instead of the public npm registry.
@@ -423,6 +425,44 @@ Telemetry is **enabled by default** and can be disabled with any of the followin
 We welcome contributions. See the [contributing guide](CONTRIBUTING.md) for details.
 
 <br/>
+
+
+## Fork Changes
+
+This fork ([HenkDz/paperclip](https://github.com/HenkDz/paperclip)) adds:
+
+### 🖥️ Windows Desktop App (`desktop/`)
+
+Native Electron wrapper — double-click to run Paperclip. No terminal needed.
+
+```powershell
+# Build
+pnpm install
+pnpm desktop:build      # Build UI + server bundle
+pnpm desktop:dist       # Full .exe (NSIS installer)
+
+# Dev
+pnpm desktop:dev        # Build + launch Electron
+```
+
+- **In-process server** — the Paperclip server runs inside Electron (no spawn)
+- **System tray** — minimize to tray, right-click to quit
+- **Single instance** — second launch focuses existing window
+- **Data** stored in `%APPDATA%/paperclip-desktop/`
+- All features identical to the web version — same server, same UI
+
+### 🛠️ NTFS QoL Patches
+
+- `stderr_group` — amber accordion for MCP init noise in run transcripts
+- `tool_group` — collapsible accordion for consecutive non-terminal tools
+- `Dashboard excerpt` — strips markdown, shows first 3 lines/280 chars
+- `vite build` — use `node node_modules/vite/bin/vite.js build` (NTFS workaround)
+
+### 🔌 Externalized Adapters
+
+- Hermes adapter removed from core — install via Board → Adapter Manager
+- Plugin system supports external adapter loading (PR #2218 pattern)
+- Branch: `feat/externalize-hermes-adapter`
 
 ## Community
 

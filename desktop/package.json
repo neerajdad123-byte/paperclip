@@ -1,0 +1,47 @@
+{
+  "name": "paperclip-desktop",
+  "version": "0.1.0",
+  "description": "Paperclip Desktop — control plane for AI agent companies on Windows",
+  "author": "Paperclip Contributors",
+  "private": true,
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "dev": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --win"
+  },
+  "devDependencies": {
+    "electron": "35.6.0",
+    "electron-builder": "^26.0.12",
+    "esbuild": "^0.28.1"
+  },
+  "build": {
+    "appId": "ai.paperclip.desktop",
+    "productName": "Paperclip",
+    "directories": { "output": "dist-electron" },
+    "files": [
+      "main.js",
+      "preload.cjs",
+      "icons/*",
+      "!node_modules/**"
+    ],
+    "extraResources": [
+      { "from": "server-bundle.js", "to": "server-bundle.js" },
+      { "from": "server-bundle.js.map", "to": "server-bundle.js.map" },
+      { "from": "migrations", "to": "migrations" },
+      { "from": "ui-dist", "to": "ui-dist" }
+    ],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "icons/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Paperclip"
+    }
+  }
+}

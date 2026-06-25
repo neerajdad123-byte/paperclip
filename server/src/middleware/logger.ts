@@ -28,23 +28,25 @@ const sharedOpts = {
   singleLine: true,
 };
 
-export const logger = pino({
-  level: "debug",
-  redact: ["req.headers.authorization"],
-}, pino.transport({
-  targets: [
-    {
-      target: "pino-pretty",
-      options: { ...sharedOpts, ignore: "pid,hostname,req,res,responseTime", colorize: true, destination: 1 },
-      level: "info",
-    },
-    {
-      target: "pino-pretty",
-      options: { ...sharedOpts, colorize: false, destination: logFile, mkdir: true },
+export const logger = process.env.PAPERCLIP_LOG_PLAIN
+  ? pino({ level: "debug", redact: ["req.headers.authorization"] })
+  : pino({
       level: "debug",
-    },
-  ],
-}));
+      redact: ["req.headers.authorization"],
+    }, pino.transport({
+      targets: [
+        {
+          target: "pino-pretty",
+          options: { ...sharedOpts, ignore: "pid,hostname,req,res,responseTime", colorize: true, destination: 1 },
+          level: "info",
+        },
+        {
+          target: "pino-pretty",
+          options: { ...sharedOpts, colorize: false, destination: logFile, mkdir: true },
+          level: "debug",
+        },
+      ],
+    }));
 
 export const httpLogger = pinoHttp({
   logger,

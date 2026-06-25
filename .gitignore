@@ -60,3 +60,11 @@ tests/release-smoke/playwright-report/
 .superpowers/
 .claude/worktrees/
 .herenow
+
+# Desktop app build artifacts
+desktop/dist-electron/
+desktop/server-bundle.js
+desktop/server-bundle.js.map
+desktop/ui-dist/
+desktop/migrations/
+desktop/package-lock.json

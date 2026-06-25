@@ -339,10 +339,14 @@ export async function createApp(
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   if (opts.uiMode === "static") {
-    // Try published location first (server/ui-dist/), then monorepo dev location (../../ui/dist)
+    // Try published location first (server/ui-dist/), then monorepo dev location (../../ui/dist),
+    // then desktop-bundle sibling location (ui-dist/ alongside the server bundle),
+    // and finally PAPERCLIP_UI_DIST env override.
     const candidates = [
       path.resolve(__dirname, "../ui-dist"),
       path.resolve(__dirname, "../../ui/dist"),
+      path.resolve(__dirname, "ui-dist"),
+      ...(process.env.PAPERCLIP_UI_DIST ? [process.env.PAPERCLIP_UI_DIST] : []),
     ];
     const uiDist = candidates.find((p) => fs.existsSync(path.join(p, "index.html")));
     if (uiDist) {

@@ -219,3 +219,13 @@ PR #2218 (`feat/external-adapter-phase1`) adds external adapter support. See roo
 - `createServerAdapter()` must include ALL optional fields (especially `detectModel`)
 - Built-in UI adapters can shadow external plugin parsers — remove built-in when fully externalizing
 - Reference external adapters: Hermes (`@henkey/hermes-paperclip-adapter` or `file:`) and Droid (npm)
+
+### Desktop App (Electron)
+
+- `desktop/` contains an Electron wrapper that bundles Paperclip as a native Windows app
+- Build: `pnpm desktop:build` → `pnpm desktop:dist` (creates NSIS installer in `desktop/dist-electron/`)
+- Dev: `pnpm desktop:dev` — builds UI + server bundle, launches Electron in dev mode
+- The server is esbuild-bundled into `desktop/server-bundle.js` (all workspace packages inlined)
+- UI static files are copied to `desktop/ui-dist/` (Vite build output)
+- Server path resolution in `server/src/app.ts` includes a `ui-dist/` sibling candidate for desktop packaging
+- `PAPERCLIP_HOME` is set to Electron's `userData` directory so DB/config lives under `%APPDATA%/Paperclip/`
